@@ -21,7 +21,7 @@ fn main() {
     let input_dir_path = Path::new("./in");
     let input_dir = read_dir(&input_dir_path).expect(&format!("Permission error whilie reading {} directory", input_dir_path.to_str().unwrap()));
 
-    let now = Instant::now();
+    let mut execution_time: u128 = 0;
 
     input_dir.for_each(|de| {
         let input_path = de.unwrap().path();
@@ -29,13 +29,14 @@ fn main() {
         let file_name = file_name.to_str().unwrap();
         let file = File::open(input_path).unwrap();
 
-        let utf8_output = Command::new(binary)
-            .stdin(file)
-            .output()
-            .expect("failed to execute process")
-            .stdout;
+        let mut command = Command::new(binary);
+        command.stdin(file);
 
-        let output = String::from_utf8(utf8_output).unwrap();
+        let now = Instant::now();
+        let output = command.output();
+        execution_time += now.elapsed().as_millis();
+
+        let output = String::from_utf8(output.expect("failed to execute process").stdout).unwrap();
         let output = output.trim();
         let answer = read_to_string(format!("./out/{}", file_name)).expect("Something went wrong reading the file");
         let answer = answer.trim();
@@ -48,5 +49,5 @@ fn main() {
         }
     });
 
-    println!("\nTook {}ms", now.elapsed().as_millis());
+    println!("\nTook {}ms", execution_time);
 }
