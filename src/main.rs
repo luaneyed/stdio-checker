@@ -28,7 +28,7 @@ fn main() {
         let file_name = input_path.file_name().unwrap().to_owned();
         let file_name = file_name.to_str().unwrap();
 
-        println!("{}", file_name.bold());
+        println!("\n{}", file_name.bold());
 
         let file = File::open(input_path).unwrap();
 
@@ -37,7 +37,10 @@ fn main() {
 
         let now = Instant::now();
         let output = command.output();
-        execution_time += now.elapsed().as_millis();
+        let took = now.elapsed().as_millis();
+
+        println!("Took {}ms", took);
+        execution_time += took;
 
         let output = String::from_utf8(output.expect("failed to execute process").stdout).unwrap();
         let output = output.trim();
@@ -51,5 +54,5 @@ fn main() {
         }
     });
 
-    println!("\nTook {}ms", execution_time);
+    println!("\nTotally Took {}ms", execution_time);
 }
