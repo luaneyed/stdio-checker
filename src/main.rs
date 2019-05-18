@@ -22,6 +22,8 @@ fn main() {
     let input_dir = read_dir(&input_dir_path).expect(&format!("Permission error whilie reading {} directory", input_dir_path.to_str().unwrap()));
 
     let mut execution_time: u128 = 0;
+    let mut max_execution_time: u128 = 0;
+    let mut file_took_max_execution_time: Option<String> = None;
 
     input_dir.for_each(|de| {
         let input_path = de.unwrap().path();
@@ -40,6 +42,10 @@ fn main() {
         let took = now.elapsed().as_millis();
 
         println!("Took {}ms", took);
+        if took > max_execution_time {
+            max_execution_time = took;
+            file_took_max_execution_time = Some(file_name.to_owned());
+        }
         execution_time += took;
 
         let output = String::from_utf8(output.expect("failed to execute process").stdout).unwrap();
@@ -53,6 +59,10 @@ fn main() {
             println!("{} {} {}", "fail".red(), output, answer);
         }
     });
+
+    if let Some(file_name) = file_took_max_execution_time {
+        println!("\nLongest execution time is {}ms for {}", max_execution_time.to_string().italic(), file_name.bold());
+    }
 
     println!("\nTotally Took {}ms", execution_time);
 }
