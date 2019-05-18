@@ -27,9 +27,12 @@ fn main() {
         let input_path = de.unwrap().path();
         let file_name = input_path.file_name().unwrap().to_owned();
         let file_name = file_name.to_str().unwrap();
+
+        println!("{}", file_name.bold());
+
         let file = File::open(input_path).unwrap();
 
-        let mut command = Command::new(binary);
+        let mut command = Command::new(&binary);
         command.stdin(file);
 
         let now = Instant::now();
@@ -41,7 +44,6 @@ fn main() {
         let answer = read_to_string(format!("./out/{}", file_name)).expect("Something went wrong reading the file");
         let answer = answer.trim();
 
-        println!("{}", file_name);
         if output == answer {
             println!("{}", "pass".green());
         } else {
